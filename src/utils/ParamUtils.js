@@ -1,8 +1,8 @@
 import _ from "lodash";
 import minimist from "minimist";
-// import { ChatServerRedisOptions } from "denetwork-chat-server";
 import denetwork_chat_server from 'denetwork-chat-server';
-const { ChatServerRedisOptions } = denetwork_chat_server;
+import { ProcessUtil } from "denetwork-utils";
+const { RedisOptions } = denetwork_chat_server;
 
 
 const argv = minimist( process.argv.slice( 2 ) );
@@ -12,46 +12,13 @@ const argv = minimist( process.argv.slice( 2 ) );
  */
 export class ParamUtils
 {
-	static getStringParam( name, defaultValue )
-	{
-		if ( ! _.isString( name ) || _.isEmpty( name ) )
-		{
-			return defaultValue;
-		}
-
-		if ( undefined !== argv &&
-		     undefined !== argv[ name ] )
-		{
-			return argv[ name ];
-		}
-		if ( undefined !== process &&
-		     undefined !== process.env &&
-		     undefined !== process.env[ name.toUpperCase() ] )
-		{
-			return process.env[ name.toUpperCase() ];
-		}
-
-		return defaultValue;
-	}
-
-	static getIntParam( name, defaultValue )
-	{
-		const value = this.getStringParam( name );
-		if ( _.isString( value ) && ! _.isEmpty( value ) )
-		{
-			return parseInt( value );
-		}
-
-		return defaultValue;
-	}
-
 	/**
 	 *	@return {number}
 	 */
 	static getChatPort()
 	{
-		const port = this.getIntParam( `chat_port`, this.getDefaultChatPort() );
-		if ( this.isValidPortNumber( port ) )
+		const port = ProcessUtil.getParamIntValue( `chat_port`, this.getDefaultChatPort() );
+		if ( ProcessUtil.isValidPortNumber( port ) )
 		{
 			return port;
 		}
@@ -64,23 +31,17 @@ export class ParamUtils
 		return 6616;
 	}
 
-	static isValidPortNumber( port )
-	{
-		return _.isInteger( port ) && port > 80 && port <= 65535;
-	}
-
-
 	/**
-	 * 	@returns {ChatServerRedisOptions}
+	 * 	@returns {RedisOptions}
 	 */
 	static getRedisOptions()
 	{
 		return {
-			port : this.getIntParam( 'REDIS_PORT', 6379 ),
-			host : this.getStringParam( 'REDIS_HOST', 'host.docker.internal' ),
-			username : this.getStringParam( 'REDIS_USERNAME', '' ),
-			password : this.getStringParam( 'REDIS_PASSWORD', '' ),
-			db : this.getIntParam( 'REDIS_DB', 0 ),
+			port : ProcessUtil.getParamIntValue( 'REDIS_PORT', 6379 ),
+			host : ProcessUtil.getParamStringValue( 'REDIS_HOST', 'host.docker.internal' ),
+			username : ProcessUtil.getParamStringValue( 'REDIS_USERNAME', null ),
+			password : ProcessUtil.getParamStringValue( 'REDIS_PASSWORD', null ),
+			db : ProcessUtil.getParamIntValue( 'REDIS_DB', 0 ),
 		};
 	}
 

@@ -10,10 +10,12 @@ services:
             # 指定端口映射，类似 docker run 的 -p 选项，注意使用字符串形式
             # [local port]:[container port]
             - "6616:6616"
-        #volumes:
+            - "9011:9011"
+        extra_hosts:
+            - "host.docker.internal:192.168.3.186"
+            #- "host.docker.internal:192.168.0.96"
+        volumes:
+            - ./deploy/etc/denetwork/.swarmKey:/etc/denetwork/.swarmKey:ro
+            #- ./deploy/etc/hosts:/etc/hosts:ro
             #- ./deploy/etc/localtime:/etc/localtime:ro
             #- ./deploy/etc/timezone:/etc/timezone:ro
-            #- ./deploy/etc/hosts:/etc/hosts:ro
-        #environment:
-        #    - HTTP_PORT=6612
-        #    - STORE_DATABASE_URL=mongodb://host.docker.internal:27017/metabeem

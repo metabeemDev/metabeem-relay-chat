@@ -1,21 +1,22 @@
+import _ from "lodash";
 import express from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from "socket.io";
 
 import { TestUtil } from "denetwork-utils";
-import { ParamUtils } from "./utils/ParamUtils.js";
+import { ParamUtils } from "../utils/ParamUtils.js";
 
 import denetwork_chat_client from "denetwork-chat-client";
 const { BroadcastCallback } = denetwork_chat_client;
 
 import { ChatServer } from 'denetwork-chat-server';
 import denetwork_chat_server from 'denetwork-chat-server';
-const { ChatServerOptions } = denetwork_chat_server;
+const { ServerOptions, RedisOptions } = denetwork_chat_server;
 
 import { enable } from "@libp2p/logger";
 enable( 'denetwork-chat-server:SendMessageHandler' );
 
-import 'dotenv/config.js'
+import 'deyml/config';
 
 
 /**
@@ -42,9 +43,10 @@ let chatServer = null;
 
 
 /**
+ * 	@param p2pRelay		{ChatP2pRelay}
  *	@returns {Promise<http.Server>}
  */
-export function startServer()
+export function startChatServer( p2pRelay )
 {
 	return new Promise( async ( resolve, reject ) =>
 	{
@@ -91,29 +93,50 @@ export function startServer()
 				console.error( 'with headers', appCtx.req.headers );
 			} );
 
-			//
-			//	WebSocket events
-			//
 			/**
 			 * 	@type {BroadcastCallback}
 			 */
-			const broadcastCallback = ( /** @type {string} */ serverId, /** @type {any} */ data, /** @type {any} */ options ) =>
+			const onSendMessageCallback = ( /** @type {string} */ serverId, /** @type {any} */ data, /** @type {any} */ options ) =>
 			{
-				console.log( `::broadcastCallback :`, serverId, data, options );
+				console.log( `::onSendMessageCallback :`, serverId, data, options );
+				if ( p2pRelay )
+				{
+					//	publish to p2p network
+					p2pRelay.publish({
+						serverId : serverId,
+						data : data,
+						options : options
+					});
+				}
+
 				return true;
 			};
 
 			/**
-			 * 	@type {ChatServerOptions}
+			 * 	@type {ServerOptions}
 			 */
 			const chatServerOptions = {
 				ioServer: ioServer,
 				serverId: null,
-				broadcastCallback: broadcastCallback,
+				onSendMessageCallback: onSendMessageCallback,
 				redisOptions : ParamUtils.getRedisOptions(),
 			};
-			console.log( `will create ChatServer with options: `, chatServerOptions );
 			chatServer = new ChatServer( chatServerOptions );
+
+			/**
+			 * 	subscribe to broadcasts from the p2p network and
+			 * 	resend to the specified room if the room exists locally
+			 */
+			// if ( p2pRelay )
+			// {
+			// 	p2pRelay.messageRequestPool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
+			// 	{
+			// 		if ( _.isObject( message ) )
+			// 		{
+			// 			chatServer.sendMessageToRoom( message );
+			// 		}
+			// 	});
+			// }
 
 			//	...
 			resolve( listenServer );
