@@ -32,7 +32,7 @@ export class BaseP2pRelay
 	/**
 	 *	@type {MessageRequestPool}
 	 */
-	//messageRequestPool = new MessageRequestPool();
+	messageRequestPool = new MessageRequestPool();
 
 
 	constructor( topic )
@@ -52,7 +52,7 @@ export class BaseP2pRelay
 				//
 				//	create message request pool
 				//
-				//this.messageRequestPool.init();
+				this.messageRequestPool.init();
 
 				//
 				//	create p2p relay
@@ -134,6 +134,7 @@ export class BaseP2pRelay
 
 				//	return publishResult or undefined
 				const publishResult = await this.relayService.publish( this.subTopic, data );
+				console.log( `:: p2p network publish result: `, publishResult );
 				resolve( publishResult );
 			}
 			catch ( err )

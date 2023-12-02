@@ -35,7 +35,8 @@ export class ChatP2pRelay extends BaseP2pRelay
 					//
 					//	received a broadcast
 					//
-					//this.messageRequestPool.push( data );
+					console.log( `|||||| received a p2p broadcast, push to messageRequestPool :`, data );
+					this.messageRequestPool.push( data );
 				});
 
 				//	...

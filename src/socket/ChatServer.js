@@ -101,12 +101,17 @@ export function startChatServer( p2pRelay )
 				console.log( `::onSendMessageCallback :`, serverId, data, options );
 				if ( p2pRelay )
 				{
+					console.log( `:: will publish over p2p network` );
 					//	publish to p2p network
 					p2pRelay.publish({
 						serverId : serverId,
 						data : data,
 						options : options
 					});
+				}
+				else
+				{
+					console.log( `:: p2p network not ready` );
 				}
 
 				return true;
@@ -127,16 +132,26 @@ export function startChatServer( p2pRelay )
 			 * 	subscribe to broadcasts from the p2p network and
 			 * 	resend to the specified room if the room exists locally
 			 */
-			// if ( p2pRelay )
-			// {
-			// 	p2pRelay.messageRequestPool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
-			// 	{
-			// 		if ( _.isObject( message ) )
-			// 		{
-			// 			chatServer.sendMessageToRoom( message );
-			// 		}
-			// 	});
-			// }
+			if ( p2pRelay )
+			{
+				p2pRelay.messageRequestPool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
+				{
+					console.log( `|||||| get a message from messageRequestPool over p2p network :`, _channel, message, options );
+					if ( _.isObject( message ) )
+					{
+						console.log( `|||||| will call chatServer.sendMessageToRoom :`, message );
+						chatServer.sendMessageToRoom( message );
+					}
+					else
+					{
+						console.log( `|||||| message is not an object :`, message );
+					}
+				});
+			}
+			else
+			{
+				console.log( `|||||| p2pRelay not ready!!!!!!` );
+			}
 
 			//	...
 			resolve( listenServer );
