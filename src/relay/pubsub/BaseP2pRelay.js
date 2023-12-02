@@ -81,6 +81,7 @@ export class BaseP2pRelay
 				await this.relayService.createRelay( this.relayOptions );
 				await this.relayService.subscribe( this.subTopic, ( data ) =>
 				{
+					console.log( `|||||| received a subscribed message :`, data );
 					if ( _.isFunction( callbackBroadcast ) )
 					{
 						callbackBroadcast( data );
@@ -141,7 +142,7 @@ export class BaseP2pRelay
 
 				//	return publishResult or undefined
 				const publishResult = await this.relayService.publish( this.subTopic, data );
-				console.log( `:: p2p network publish result: `, publishResult );
+				console.log( `|||||| p2p network publish result: `, publishResult );
 				resolve( publishResult );
 			}
 			catch ( err )
@@ -165,9 +166,11 @@ export class BaseP2pRelay
 				this.lastAllSubscribers = _.cloneDeep( allSubscribers );
 				this.lastAllTopics = _.cloneDeep( allTopics );
 
-				console.log( `|||||||||| allPeers :`, allPeers );
-				console.log( `|||||||||| allSubscribers :`, allSubscribers );
-				console.log( `|||||||||| allTopics :`, allTopics );
+				console.log( `|||||| ` );
+				console.log( `|||||| allPeers :`, allPeers );
+				console.log( `|||||| allSubscribers :`, allSubscribers );
+				console.log( `|||||| allTopics :`, allTopics );
+				console.log( `|||||| ` );
 			}
 
 		}, 1000 );
