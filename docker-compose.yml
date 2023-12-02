@@ -10,7 +10,7 @@ services:
             # 指定端口映射，类似 docker run 的 -p 选项，注意使用字符串形式
             # [local port]:[container port]
             - "6616:6616"
-            - "9011:9011"
+            - "9912:9912"
         extra_hosts:
             - "host.docker.internal:192.168.3.186"
             #- "host.docker.internal:192.168.0.96"
