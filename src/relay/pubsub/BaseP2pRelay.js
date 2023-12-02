@@ -18,6 +18,10 @@ export class BaseP2pRelay
 	 */
 	subTopic = 'sync-topic';
 
+	lastAllPeers	= undefined;
+	lastAllSubscribers= undefined;
+	lastAllTopics	= undefined;
+
 	/**
 	 *    @type {RelayService}
 	 */
@@ -84,28 +88,31 @@ export class BaseP2pRelay
 				} );
 
 				//	...
-				setTimeout( () =>
-				{
-					//console.log( `${ chalk.cyan( 'Waiting for network connection to be ready' ) } ` );
-					console.log( `Waiting for network connection to be ready` );
+				this.printNetworkInfo();
 
-					// await TimerUtil.waitUntilCondition( () =>
-					// {
-					// 	const report = this.relayService.checkHealth( this.subTopic );
-					// 	if ( null !== report.errors )
-					// 	{
-					// 		console.log( `[${ new Date().toLocaleString() }] ${ chalk.bgYellow( 'WAITING : ' ) }`, report );
-					// 		return false;
-					// 	}
-					//
-					// 	return true;
-					// }, 1000 );
-					//console.log( `${ chalk.cyan( 'Network connection is ready :)' ) } ` );
-					console.log( `Network connection is ready :)` );
-					this.printNetworkInfo();
-
-				}, 1000 );
-				//await TimerUtil.waitForDelay( 1000 );
+				//
+				// setTimeout( () =>
+				// {
+				// 	//console.log( `${ chalk.cyan( 'Waiting for network connection to be ready' ) } ` );
+				// 	console.log( `Waiting for network connection to be ready` );
+				//
+				// 	// await TimerUtil.waitUntilCondition( () =>
+				// 	// {
+				// 	// 	const report = this.relayService.checkHealth( this.subTopic );
+				// 	// 	if ( null !== report.errors )
+				// 	// 	{
+				// 	// 		console.log( `[${ new Date().toLocaleString() }] ${ chalk.bgYellow( 'WAITING : ' ) }`, report );
+				// 	// 		return false;
+				// 	// 	}
+				// 	//
+				// 	// 	return true;
+				// 	// }, 1000 );
+				// 	//console.log( `${ chalk.cyan( 'Network connection is ready :)' ) } ` );
+				// 	console.log( `Network connection is ready :)` );
+				// 	this.printNetworkInfo();
+				//
+				// }, 1000 );
+				// //await TimerUtil.waitForDelay( 1000 );
 
 				//	...
 				resolve();
@@ -146,13 +153,49 @@ export class BaseP2pRelay
 
 	printNetworkInfo()
 	{
-		const allPeers = this.relayService.getPeers();
-		console.log( `)))))))))) allPeers :`, allPeers );
+		setInterval( () =>
+		{
+			const allPeers = this.relayService.getPeers();
+			const allSubscribers = this.relayService.getSubscribers( this.subTopic );
+			const allTopics = this.relayService.getTopics();
 
-		const allSubscribers = this.relayService.getSubscribers( this.subTopic );
-		console.log( `)))))))))) allSubscribers :`, allSubscribers );
+			if ( this.compareNetworkChanging( allPeers, allSubscribers, allTopics ) )
+			{
+				this.lastAllPeers = _.cloneDeep( allPeers );
+				this.lastAllSubscribers = _.cloneDeep( allSubscribers );
+				this.lastAllTopics = _.cloneDeep( allTopics );
 
-		const allTopics = this.relayService.getTopics();
-		console.log( `)))))))))) allTopics :`, allTopics );
+				console.log( `|||||||||| allPeers :`, allPeers );
+				console.log( `|||||||||| allSubscribers :`, allSubscribers );
+				console.log( `|||||||||| allTopics :`, allTopics );
+			}
+
+		}, 1000 );
+	}
+
+	compareNetworkChanging( allPeers, allSubscribers, allTopics )
+	{
+		if ( ! this.lastAllPeers || ! this.lastAllSubscribers || ! this.lastAllTopics )
+		{
+			//	changed
+			return true;
+		}
+		if ( ! _.isEqualWith( this.lastAllPeers, allPeers, ( a, b ) =>
+		{
+			return a.toString().trim().toLowerCase() === b.toString().trim().toLowerCase();
+		}) )
+		{
+			return true;
+		}
+		if ( ! _.isEqualWith( this.lastAllSubscribers, allSubscribers, ( a, b ) =>
+		{
+			return a.toString().trim().toLowerCase() === b.toString().trim().toLowerCase();
+		}) )
+		if ( ! _.isEqual( this.lastAllTopics, allTopics ) )
+		{
+			return true;
+		}
+
+		return false;
 	}
 }

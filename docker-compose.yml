@@ -12,8 +12,8 @@ services:
             - "6616:6616"
             - "9912:9912"
         extra_hosts:
-            - "host.docker.internal:192.168.3.186"
-            #- "host.docker.internal:192.168.0.96"
+            #- "host.docker.internal:192.168.3.186"
+            - "host.docker.internal:192.168.0.96"
         volumes:
             - ./deploy/etc/denetwork/.swarmKey:/etc/denetwork/.swarmKey:ro
             #- ./deploy/etc/hosts:/etc/hosts:ro

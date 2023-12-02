@@ -39,6 +39,8 @@ export class ChatP2pRelay extends BaseP2pRelay
 					this.messageRequestPool.push( data );
 				});
 
+				console.log( `|||||||| p2p relay started for syncing topic : ${ this.subTopic }` );
+
 				//	...
 				resolve( true );
 			}
