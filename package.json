@@ -1,6 +1,6 @@
 {
 	"name": "metabeem-relay-chat",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "",
 	"keywords": [],
 	"leadMaintainer": "Metabeem, Team.",
@@ -26,7 +26,7 @@
 		"denetwork-chat-client": "^1.0.51",
 		"denetwork-chat-server": "^1.0.49",
 		"denetwork-queue": "^1.0.9",
-		"denetwork-relay": "^1.0.16",
+		"denetwork-relay": "^1.0.18",
 		"denetwork-store": "^1.0.22",
 		"denetwork-utils": "^1.0.54",
 		"deyml": "^1.0.3",
