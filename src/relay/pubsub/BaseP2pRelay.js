@@ -6,6 +6,7 @@ import { ProcessUtil } from "denetwork-utils";
 
 import "deyml/config";
 import { MessageRequestPool } from "../pool/MessageRequestPool.js";
+import { PeerUtil } from "../../utils/PeerUtil.js";
 
 
 /**
@@ -61,22 +62,23 @@ export class BaseP2pRelay
 				//
 				//	create p2p relay
 				//
-				const p2p_bootstrappers = process.env.P2P_BOOTSTRAPPERS;
-				if ( ! Array.isArray( p2p_bootstrappers ) || 0 === p2p_bootstrappers.length )
+				const p2pBootstrappers = process.env.P2P_BOOTSTRAPPERS;
+				if ( ! Array.isArray( p2pBootstrappers ) || 0 === p2pBootstrappers.length )
 				{
 					return reject( `invalid p2p bootstrappers` );
 				}
 
-				const p2p_port = ProcessUtil.getParamIntValue( `p2p_port` );
+				const p2pPort = ProcessUtil.getParamIntValue( `p2p_port` );
+				const p2pAnnounceAddresses = PeerUtil.getAnnounceAddresses();
 				const peerIdFilename = ProcessUtil.getParamStringValue( `p2p_peer_id` );
 				const swarmKeyFilename = ProcessUtil.getParamStringValue( `p2p_swarm_key` );
 				this.relayOptions = CreateRelayOptionsBuilder.builder()
 					.setPeerIdFilename( peerIdFilename )
 					.setSwarmKeyFilename( swarmKeyFilename )
-					.setPort( p2p_port )
-					.setAnnounceAddresses( [] )
-					.setBootstrapperAddresses( p2p_bootstrappers )
-					//.setPubsubPeerDiscoveryTopics( [] )
+					.setPort( p2pPort )
+					.setAnnounceAddresses( p2pAnnounceAddresses )
+					.setBootstrapperAddresses( p2pBootstrappers )
+					.setPubsubPeerDiscoveryTopics( [] )
 					.build();
 				await this.relayService.createRelay( this.relayOptions );
 				await this.relayService.subscribe( this.subTopic, ( data ) =>
@@ -166,11 +168,10 @@ export class BaseP2pRelay
 				this.lastAllSubscribers = _.cloneDeep( allSubscribers );
 				this.lastAllTopics = _.cloneDeep( allTopics );
 
-				console.log( `|||||| ` );
-				console.log( `|||||| allPeers :`, allPeers );
-				console.log( `|||||| allSubscribers :`, allSubscribers );
-				console.log( `|||||| allTopics :`, allTopics );
-				console.log( `|||||| ` );
+				console.log( `))) ` );
+				console.log( `))) allPeers :`, allPeers );
+				console.log( `))) allSubscribers :`, allSubscribers );
+				console.log( `))) allTopics :`, allTopics );
 			}
 
 		}, 1000 );

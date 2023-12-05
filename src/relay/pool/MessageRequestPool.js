@@ -1,4 +1,4 @@
-import { ParamUtils } from "../../utils/ParamUtils.js";
+import { LocalParamUtils } from "../../utils/LocalParamUtils.js";
 import { ChPubService, ChSubService } from "denetwork-queue";
 import _ from "lodash";
 
@@ -28,7 +28,7 @@ export class MessageRequestPool
 		//
 		//	create redis pool for received HTTP requests that been broadcast from other peers
 		//
-		const redisOptions = ParamUtils.getRedisOptions();
+		const redisOptions = LocalParamUtils.getRedisOptions();
 		console.log( `redisOptions :`, redisOptions );
 
 		this.chPub = new ChPubService( redisOptions.port, redisOptions.host, {

@@ -4,14 +4,14 @@ import http from 'http';
 import { Server as SocketIOServer } from "socket.io";
 
 import { TestUtil } from "denetwork-utils";
-import { ParamUtils } from "../utils/ParamUtils.js";
+import { LocalParamUtils } from "../utils/LocalParamUtils.js";
 
 import denetwork_chat_client from "denetwork-chat-client";
 const { BroadcastCallback } = denetwork_chat_client;
 
 import { ChatServer } from 'denetwork-chat-server';
 import denetwork_chat_server from 'denetwork-chat-server';
-const { ServerOptions, RedisOptions } = denetwork_chat_server;
+const { ServerOptions } = denetwork_chat_server;
 
 import { enable } from "@libp2p/logger";
 enable( 'denetwork-chat-server:SendMessageHandler' );
@@ -22,7 +22,7 @@ import 'deyml/config';
 /**
  *	@type {number}
  */
-const chatPort = ParamUtils.getChatPort();
+const chatPort = LocalParamUtils.getChatPort();
 
 //	...
 const expressServer = express();
@@ -124,7 +124,7 @@ export function startChatServer( p2pRelay )
 				ioServer: ioServer,
 				serverId: null,
 				onSendMessageCallback: onSendMessageCallback,
-				redisOptions : ParamUtils.getRedisOptions(),
+				redisOptions : LocalParamUtils.getRedisOptions(),
 			};
 			chatServer = new ChatServer( chatServerOptions );
 

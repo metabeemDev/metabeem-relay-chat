@@ -29,7 +29,7 @@ export class ChatP2pRelay extends BaseP2pRelay
 					     _.has( data.body, 'heartbeat' ) )
 					{
 						//	ignore heartbeat
-						console.log( `|||||| heartbeat :`, data );
+						console.log( `|||||| heartbeat ~~~~~~~~` );
 						return false;
 					}
 

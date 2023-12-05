@@ -10,7 +10,7 @@ const argv = minimist( process.argv.slice( 2 ) );
 /**
  * 	@class
  */
-export class ParamUtils
+export class LocalParamUtils
 {
 	/**
 	 *	@return {number}
