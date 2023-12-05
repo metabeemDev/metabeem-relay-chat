@@ -35,6 +35,10 @@ const socketServerOptions = {
 };
 const ioServer = new SocketIOServer( httpServer, socketServerOptions );
 
+//	allow access from any domain name and any port
+ioServer.origins( '*:*' );
+
+
 /**
  *	@type {ChatServer}
  */
