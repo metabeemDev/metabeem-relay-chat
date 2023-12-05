@@ -30,13 +30,10 @@ const httpServer = http.createServer( expressServer );
 const socketServerOptions = {
 	cors : {
 		origin : "*",
-		credentials : true
+		//credentials : true
 	}
 };
 const ioServer = new SocketIOServer( httpServer, socketServerOptions );
-
-//	allow access from any domain name and any port
-ioServer.origins( '*:*' );
 
 
 /**
