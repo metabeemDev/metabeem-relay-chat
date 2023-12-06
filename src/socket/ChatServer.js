@@ -137,21 +137,23 @@ export function startChatServer( p2pRelay )
 			{
 				p2pRelay.messageRequestPool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
 				{
-					console.log( `|||||| get a message from messageRequestPool over p2p network :`, _channel, message, options );
-					if ( _.isObject( message ) )
+					console.log( `&&&&&& received a message from messageRequestPool :`, _channel, message, options );
+					if ( _.isObject( message ) &&
+					     _.isObject( message.body ) &&
+					     _.isObject( message.body.data ) )
 					{
-						console.log( `|||||| will call chatServer.sendMessageToRoom :`, message );
-						chatServer.sendMessageToRoom( message.body );
+						console.log( `&&&&&& will call chatServer.sendMessageToRoom :`, message );
+						chatServer.sendMessageToRoom( message.body.data );
 					}
 					else
 					{
-						console.log( `|||||| message is not an object :`, message );
+						console.log( `&&&&&& message is not an object :`, message );
 					}
 				});
 			}
 			else
 			{
-				console.log( `|||||| p2pRelay not ready!!!!!!` );
+				console.log( `&&&&&& p2pRelay not ready!!!!!!` );
 			}
 
 			//	...
