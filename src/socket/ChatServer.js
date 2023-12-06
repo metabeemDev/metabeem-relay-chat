@@ -141,7 +141,7 @@ export function startChatServer( p2pRelay )
 					if ( _.isObject( message ) )
 					{
 						console.log( `|||||| will call chatServer.sendMessageToRoom :`, message );
-						chatServer.sendMessageToRoom( message );
+						chatServer.sendMessageToRoom( message.body );
 					}
 					else
 					{

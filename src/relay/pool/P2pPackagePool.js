@@ -5,9 +5,9 @@ import _ from "lodash";
 /**
  * 	@class
  */
-export class MessageRequestPool
+export class P2pPackagePool
 {
-	requestPoolName = `message-request-pool`;
+	requestPoolName = `p2p-package-pool`;
 	chPub;
 	chSub;
 
@@ -60,10 +60,10 @@ export class MessageRequestPool
 
 	/**
 	 * 	push http request to redis pool
-	 *	@param request	{ object | string }
+	 *	@param p2pPackage	{ object }
 	 *	@returns {Promise<boolean>}
 	 */
-	push( request )
+	push( p2pPackage )
 	{
 		return new Promise( async ( resolve, reject ) =>
 		{
@@ -71,14 +71,23 @@ export class MessageRequestPool
 			{
 				if ( ! this.chPub )
 				{
-					return reject( `${ this.constructor.name }.pushRequest :: not initialized` );
-				}
-				if ( ! _.isObject( request ) || _.isEmpty( request ) )
-				{
-					return reject( `${ this.constructor.name }.pushRequest :: invalid request` );
+					return reject( `${ this.constructor.name }.push :: not initialized` );
 				}
 
-				const result = await this.chPub.publish( this.requestPoolName, request );
+				const errorP2pPackage = this.verifyP2pPackage( p2pPackage );
+				if ( null !== errorP2pPackage )
+				{
+					return reject( `${ this.constructor.name }.push :: ${ errorP2pPackage }` );
+				}
+
+				const item = {
+					topic : p2pPackage.topic,
+					msgId : p2pPackage.msgId,
+					from : p2pPackage.from.toString(),
+					sequenceNumber : p2pPackage.sequenceNumber.toString(),
+					body : p2pPackage.body,
+				};
+				const result = await this.chPub.publish( this.requestPoolName, item );
 				resolve( result );
 			}
 			catch ( err )
@@ -102,6 +111,9 @@ export class MessageRequestPool
 		//
 		//	process the Message request pool
 		//
+		const chSubOptions = {
+			parseJSON : true
+		};
 		this.chSub.subscribe( this.requestPoolName, ( /** @type {string} **/ channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
 		{
 			console.log( `))) MessageRequestPool :: received message from channel [${channel}] : `, message );
@@ -110,6 +122,49 @@ export class MessageRequestPool
 				callback( channel, message, options );
 			}
 
-		}, { parseJSON : true } );
+		}, chSubOptions );
+	}
+
+	verifyP2pPackage( p2pPackage )
+	{
+		if ( ! _.isObject( p2pPackage ) )
+		{
+			return `invalid p2pPackage`;
+		}
+		if ( ! _.every(
+			[ 'type', 'topic', 'msgId', 'from', 'sequenceNumber', 'body' ],
+				key => _.has( p2pPackage, key ) ) )
+		{
+			return `invalid p2pPackage[ keys ]`;
+		}
+		if ( ! _.isString( p2pPackage.type ) || _.isEmpty( p2pPackage.type ) )
+		{
+			return `invalid p2pPackage.type`;
+		}
+		if ( ! _.isString( p2pPackage.topic ) || _.isEmpty( p2pPackage.topic ) )
+		{
+			return `invalid p2pPackage.topic`;
+		}
+		if ( ! _.isString( p2pPackage.msgId ) || _.isEmpty( p2pPackage.msgId ) )
+		{
+			return `invalid p2pPackage.msgId`;
+		}
+		if ( ! _.isObject( p2pPackage.from ) )
+		{
+			return `invalid p2pPackage.from`;
+		}
+		if ( ! _.isBigInt( p2pPackage.sequenceNumber ) )
+		{
+			return `invalid p2pPackage.sequenceNumber`;
+		}
+		if ( ! _.isObject( p2pPackage.body ) &&
+			_.isString( p2pPackage.body.serverId ) &&
+			! _.isEmpty( p2pPackage.body.serverId ) &&
+			_.isObject( p2pPackage.body.data ) )
+		{
+			return `invalid p2pPackage.body`;
+		}
+
+		return null;
 	}
 }

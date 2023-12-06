@@ -23,10 +23,10 @@ export class ChatP2pRelay extends BaseP2pRelay
 				//
 				//	start p2p relay
 				//
-				await super.start( ( data ) =>
+				await super.start( async ( p2pPackage ) =>
 				{
-					if ( _.isObject( data.body ) &&
-					     _.has( data.body, 'heartbeat' ) )
+					if ( _.isObject( p2pPackage.body ) &&
+					     _.has( p2pPackage.body, 'heartbeat' ) )
 					{
 						//	ignore heartbeat
 						console.log( `|||||| heartbeat ~~~~~~~~` );
@@ -36,8 +36,8 @@ export class ChatP2pRelay extends BaseP2pRelay
 					//
 					//	received a broadcast
 					//
-					console.log( `|||||| received a p2p broadcast, push to messageRequestPool :`, data );
-					this.messageRequestPool.push( data );
+					console.log( `|||||| received a p2p broadcast, push to messageRequestPool :`, p2pPackage );
+					await this.messageRequestPool.push( p2pPackage );
 				});
 
 				console.log( `|||||||| p2p relay started for syncing topic : ${ this.subTopic }` );
