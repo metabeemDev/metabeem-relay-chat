@@ -1,6 +1,7 @@
 import { LocalParamUtils } from "../../utils/LocalParamUtils.js";
 import { ChPubService, ChSubService } from "denetwork-queue";
 import _ from "lodash";
+import { TypeUtil } from "denetwork-utils";
 
 /**
  * 	@class
@@ -153,7 +154,7 @@ export class P2pPackagePool
 		{
 			return `invalid p2pPackage.from`;
 		}
-		if ( ! _.isBigInt( p2pPackage.sequenceNumber ) )
+		if ( ! TypeUtil.isBigint( p2pPackage.sequenceNumber ) )
 		{
 			return `invalid p2pPackage.sequenceNumber`;
 		}
