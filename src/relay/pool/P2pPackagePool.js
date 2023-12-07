@@ -81,6 +81,10 @@ export class P2pPackagePool
 					return reject( `${ this.constructor.name }.push :: ${ errorP2pPackage }` );
 				}
 
+				console.log( `|||||| p2p : received a business broadcasting package, it has been verified. 
+						topic : ${ p2pPackage.topic }, 
+						from : ${ p2pPackage.from.toString() },
+						sequenceNumber: ${ p2pPackage.sequenceNumber.toString() }` );
 				const item = {
 					topic : p2pPackage.topic,
 					msgId : p2pPackage.msgId,

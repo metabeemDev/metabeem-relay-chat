@@ -83,7 +83,7 @@ export class BaseP2pRelay
 				await this.relayService.createRelay( this.relayOptions );
 				await this.relayService.subscribe( this.subTopic, ( data ) =>
 				{
-					console.log( `|||||| received a subscribed message :`, data );
+					console.log( `|||||| received a subscribed message @${ this.constructor.name }` );
 					if ( _.isFunction( callbackBroadcast ) )
 					{
 						callbackBroadcast( data );

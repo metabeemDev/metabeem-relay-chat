@@ -29,18 +29,18 @@ export class ChatP2pRelay extends BaseP2pRelay
 					     _.has( p2pPackage.body, 'heartbeat' ) )
 					{
 						//	ignore heartbeat
-						console.log( `|||||| heartbeat ~~~~~~~~` );
+						console.log( `|||||| p2p : received a business broadcasting heartbeat packet ~~~~~~~~` );
 						return false;
 					}
 
 					//
 					//	received a broadcast
 					//
-					console.log( `|||||| received a p2p broadcast, push to messageRequestPool :`, p2pPackage );
+					console.log( `|||||| p2p : received a business broadcasting package, try to push it into messageRequestPool` );
 					await this.messageRequestPool.push( p2pPackage );
 				});
 
-				console.log( `|||||||| p2p relay started for syncing topic : ${ this.subTopic }` );
+				console.log( `|||||||| p2p : relay started for syncing topic : ${ this.subTopic }` );
 
 				//	...
 				resolve( true );
