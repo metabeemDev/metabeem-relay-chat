@@ -1,62 +1,16 @@
-import { LocalParamUtils } from "../../utils/LocalParamUtils.js";
-import { ChPubService, ChSubService } from "denetwork-queue";
+import { AbstractP2pPackagePool } from "denetwork-relay";
 import _ from "lodash";
 import { TypeUtil } from "denetwork-utils";
 
 /**
  * 	@class
  */
-export class P2pPackagePool
+export class P2pChatPackagePool extends AbstractP2pPackagePool
 {
-	requestPoolName = `p2p-package-pool`;
-	chPub;
-	chSub;
-
 	constructor()
 	{
-	}
-
-	/**
-	 * 	@returns {boolean}
-	 */
-	init()
-	{
-		if ( this.isInitialized() )
-		{
-			return true;
-		}
-
-		//
-		//	create redis pool for received HTTP requests that been broadcast from other peers
-		//
-		const redisOptions = LocalParamUtils.getRedisOptions();
-		console.log( `redisOptions :`, redisOptions );
-
-		this.chPub = new ChPubService( redisOptions.port, redisOptions.host, {
-			port : redisOptions.port,
-			host : redisOptions.host,
-			username : redisOptions.username,
-			password : redisOptions.password,
-			db : redisOptions.db
-		} );
-		this.chSub = new ChSubService( redisOptions.port, redisOptions.host, {
-			port : redisOptions.port,
-			host : redisOptions.host,
-			username : redisOptions.username,
-			password : redisOptions.password,
-			db : redisOptions.db
-		} );
-
-		//	...
-		return true;
-	}
-
-	/**
-	 *	@return {boolean}
-	 */
-	isInitialized()
-	{
-		return ( !! this.chPub ) && ( !! this.chSub );
+		super();
+		this.setPoolName( this.constructor.name );
 	}
 
 	/**
@@ -92,7 +46,7 @@ export class P2pPackagePool
 					sequenceNumber : p2pPackage.sequenceNumber.toString(),
 					body : p2pPackage.body,
 				};
-				const result = await this.chPub.publish( this.requestPoolName, item );
+				const result = await this.chPub.publish( this.poolName, item );
 				resolve( result );
 			}
 			catch ( err )
@@ -100,34 +54,6 @@ export class P2pPackagePool
 				reject( err );
 			}
 		});
-	}
-
-	/**
-	 *	@param callback	{function}
-	 *	@returns {void}
-	 */
-	subscribe( callback )
-	{
-		if ( ! this.chSub || ! this.chPub )
-		{
-			throw Error( `${ this.constructor.name } :: not initialized` );
-		}
-
-		//
-		//	process the Message request pool
-		//
-		const chSubOptions = {
-			parseJSON : true
-		};
-		this.chSub.subscribe( this.requestPoolName, ( /** @type {string} **/ channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
-		{
-			console.log( `))) MessageRequestPool :: received message from channel [${channel}] : `, message );
-			if ( _.isFunction( callback ) )
-			{
-				callback( channel, message, options );
-			}
-
-		}, chSubOptions );
 	}
 
 	verifyP2pPackage( p2pPackage )

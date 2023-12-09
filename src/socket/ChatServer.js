@@ -135,7 +135,7 @@ export function startChatServer( p2pRelay )
 			 */
 			if ( p2pRelay )
 			{
-				p2pRelay.messageRequestPool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
+				p2pRelay.p2pChatPackagePool.subscribe( ( /** @type {string} **/ _channel, /** @type {string} **/ message, /** @type {any} **/ options ) =>
 				{
 					console.log( `&&&&&& received a message from messageRequestPool :`, _channel, message, options );
 					if ( _.isObject( message ) &&

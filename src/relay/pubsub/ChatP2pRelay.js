@@ -37,7 +37,7 @@ export class ChatP2pRelay extends BaseP2pRelay
 					//	received a broadcast
 					//
 					console.log( `|||||| p2p : received a business broadcasting package, try to push it into messageRequestPool` );
-					await this.messageRequestPool.push( p2pPackage );
+					await this.p2pChatPackagePool.push( p2pPackage );
 				});
 
 				console.log( `|||||||| p2p : relay started for syncing topic : ${ this.subTopic }` );

@@ -1,8 +1,7 @@
 import _ from "lodash";
 import minimist from "minimist";
-import denetwork_chat_server from 'denetwork-chat-server';
 import { ProcessUtil } from "denetwork-utils";
-const { RedisOptions } = denetwork_chat_server;
+import { DeRedisOptions } from "denetwork-queue";
 
 
 const argv = minimist( process.argv.slice( 2 ) );
@@ -32,7 +31,7 @@ export class LocalParamUtils
 	}
 
 	/**
-	 * 	@returns {RedisOptions}
+	 * 	@returns {DeRedisOptions}
 	 */
 	static getRedisOptions()
 	{

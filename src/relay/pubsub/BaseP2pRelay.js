@@ -5,7 +5,7 @@ import { CreateRelayOptionsBuilder } from "denetwork-relay";
 import { ProcessUtil } from "denetwork-utils";
 
 import "deyml/config";
-import { P2pPackagePool } from "../pool/P2pPackagePool.js";
+import { P2pChatPackagePool } from "../pool/P2pChatPackagePool.js";
 import { PeerUtil } from "../../utils/PeerUtil.js";
 
 
@@ -35,9 +35,9 @@ export class BaseP2pRelay
 	relayOptions = {};
 
 	/**
-	 *	@type {P2pPackagePool}
+	 *	@type {P2pChatPackagePool}
 	 */
-	messageRequestPool = new P2pPackagePool();
+	p2pChatPackagePool = new P2pChatPackagePool();
 
 
 	constructor( topic )
@@ -57,7 +57,7 @@ export class BaseP2pRelay
 				//
 				//	create message request pool
 				//
-				this.messageRequestPool.init();
+				this.p2pChatPackagePool.init();
 
 				//
 				//	create p2p relay
