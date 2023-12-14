@@ -42,10 +42,12 @@ export class BaseP2pRelay
 
 	constructor( topic )
 	{
-		if ( _.isString( topic ) && ! _.isEmpty( topic ) )
+		if ( ! _.isString( topic ) || _.isEmpty( topic ) )
 		{
-			this.subTopic = topic;
+			throw new Error( `${ this.constructor.name }.constructor :: invalid topic` );
 		}
+
+		this.subTopic = topic;
 	}
 
 	async start( callbackBroadcast )
