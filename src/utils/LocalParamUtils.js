@@ -1,7 +1,9 @@
 import _ from "lodash";
 import minimist from "minimist";
 import { ProcessUtil } from "denetwork-utils";
-import { DeRedisOptions } from "denetwork-queue";
+
+import denetwork_queue from "denetwork-queue";
+const { DeRedisOptions } = denetwork_queue;
 
 
 const argv = minimist( process.argv.slice( 2 ) );
